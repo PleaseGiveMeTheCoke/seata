@@ -60,9 +60,25 @@ public class TCCResourceManager extends AbstractResourceManager {
      */
     @Override
     public void registerResource(Resource resource) {
-        TCCResource tccResource = (TCCResource)resource;
-        tccResourceCache.put(tccResource.getResourceId(), tccResource);
-        super.registerResource(tccResource);
+        TCCResource newResource = (TCCResource) resource;
+        TCCResource oldResource = getTCCResource(newResource.getResourceId());
+
+        if (oldResource != null) {
+            Class<?> newResourceClass = newResource.getTargetBean().getClass();
+            Class<?> oldResourceClass = oldResource.getTargetBean().getClass();
+            if (!newResourceClass.isAssignableFrom(oldResourceClass)
+                    && !oldResourceClass.isAssignableFrom(newResourceClass)) {
+                throw new ShouldNeverHappenException(String.format("Same TCC resource name between class <%s> and class <%s>, should be unique",
+                        newResourceClass.getName(), oldResourceClass.getName()));
+            }
+        }
+
+        tccResourceCache.put(newResource.getResourceId(), newResource);
+        super.registerResource(newResource);
+    }
+
+    public TCCResource getTCCResource(String resourceId) {
+        return (TCCResource) tccResourceCache.get(resourceId);
     }
 
     @Override
@@ -84,7 +100,7 @@ public class TCCResourceManager extends AbstractResourceManager {
     @Override
     public BranchStatus branchCommit(BranchType branchType, String xid, long branchId, String resourceId,
                                      String applicationData) throws TransactionException {
-        TCCResource tccResource = (TCCResource)tccResourceCache.get(resourceId);
+        TCCResource tccResource = getTCCResource(resourceId);
         if (tccResource == null) {
             throw new ShouldNeverHappenException(String.format("TCC resource is not exist, resourceId: %s", resourceId));
         }
@@ -143,7 +159,7 @@ public class TCCResourceManager extends AbstractResourceManager {
     @Override
     public BranchStatus branchRollback(BranchType branchType, String xid, long branchId, String resourceId,
                                        String applicationData) throws TransactionException {
-        TCCResource tccResource = (TCCResource)tccResourceCache.get(resourceId);
+        TCCResource tccResource = getTCCResource(resourceId);
         if (tccResource == null) {
             throw new ShouldNeverHappenException(String.format("TCC resource is not exist, resourceId: %s", resourceId));
         }

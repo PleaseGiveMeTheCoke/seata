@@ -22,7 +22,7 @@ import io.seata.rm.tcc.api.TwoPhaseBusinessAction;
 @LocalTCC
 public interface NormalTccAction {
 
-    @TwoPhaseBusinessAction(name = "tccActionForTestSuccess")
+    @TwoPhaseBusinessAction(name = "tccActionForTestWithException")
     boolean prepare(BusinessActionContext actionContext);
 
     @TwoPhaseBusinessAction(name = "tccActionForTestWithException")

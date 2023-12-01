@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.seata.common.Constants;
+import io.seata.common.exception.RepeatRegistrationException;
 import io.seata.common.exception.ShouldNeverHappenException;
 import io.seata.common.exception.SkipCallbackWrapperException;
 import io.seata.core.exception.TransactionException;
@@ -60,20 +61,20 @@ public class TCCResourceManager extends AbstractResourceManager {
      */
     @Override
     public void registerResource(Resource resource) {
+        String resourceId = resource.getResourceId();
         TCCResource newResource = (TCCResource) resource;
-        TCCResource oldResource = getTCCResource(newResource.getResourceId());
+        TCCResource oldResource = getTCCResource(resourceId);
 
         if (oldResource != null) {
             Class<?> newResourceClass = newResource.getTargetBean().getClass();
             Class<?> oldResourceClass = oldResource.getTargetBean().getClass();
-            if (!newResourceClass.isAssignableFrom(oldResourceClass)
-                    && !oldResourceClass.isAssignableFrom(newResourceClass)) {
-                throw new ShouldNeverHappenException(String.format("Same TCC resource name between class <%s> and class <%s>, should be unique",
-                        newResourceClass.getName(), oldResourceClass.getName()));
+            if(newResourceClass != oldResourceClass) {
+                throw new RepeatRegistrationException(String.format("Same TCC resource name <%s> between class <%s> and class <%s>, should be unique",
+                        resourceId, newResourceClass.getName(), oldResourceClass.getName()));
             }
         }
 
-        tccResourceCache.put(newResource.getResourceId(), newResource);
+        tccResourceCache.put(resourceId, newResource);
         super.registerResource(newResource);
     }
 

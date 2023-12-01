@@ -21,6 +21,7 @@ package io.seata.common.exception;
  * @author yiqi
  */
 public class RepeatRegistrationException extends RuntimeException {
+
     /**
      * Instantiates a new RepeatRegistrationException.
      *

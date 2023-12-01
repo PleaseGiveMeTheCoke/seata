@@ -37,12 +37,12 @@ import org.junit.jupiter.api.Test;
  */
 class AdapterSpringSeataInterceptorTest {
 
-    private NormalTccAction normalTccAction;
+    private static NormalTccAction normalTccAction;
 
-    private AdapterSpringSeataInterceptor adapterSpringSeataInterceptor;
+    private static AdapterSpringSeataInterceptor adapterSpringSeataInterceptor;
 
     @BeforeAll
-    void init() throws Throwable {
+    static void init() throws Throwable {
         //given
         normalTccAction = new NormalTccActionImpl();
         ProxyInvocationHandler proxyInvocationHandler = DefaultInterfaceParser.get().parserInterfaceToProxy(normalTccAction, "proxyTccAction");

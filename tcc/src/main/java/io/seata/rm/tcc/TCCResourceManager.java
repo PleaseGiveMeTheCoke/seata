@@ -68,7 +68,7 @@ public class TCCResourceManager extends AbstractResourceManager {
         if (oldResource != null) {
             Class<?> newResourceClass = newResource.getTargetBean().getClass();
             Class<?> oldResourceClass = oldResource.getTargetBean().getClass();
-            if(newResourceClass != oldResourceClass) {
+            if (newResourceClass != oldResourceClass) {
                 throw new RepeatRegistrationException(String.format("Same TCC resource name <%s> between class <%s> and class <%s>, should be unique",
                         resourceId, newResourceClass.getName(), oldResourceClass.getName()));
             }

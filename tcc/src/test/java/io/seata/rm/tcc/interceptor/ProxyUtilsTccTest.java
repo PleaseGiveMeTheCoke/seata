@@ -98,6 +98,7 @@ public class ProxyUtilsTccTest {
     @BeforeAll
     static void init() {
         //given
+        DefaultResourceManager.get().getManagedResources().clear();
         NormalTccActionImpl normalTccAction = new NormalTccActionImpl();
         tccActionProxy = ProxyUtil.createProxy(normalTccAction);
     }

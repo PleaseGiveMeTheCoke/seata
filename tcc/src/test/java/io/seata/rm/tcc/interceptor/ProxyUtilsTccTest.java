@@ -28,10 +28,10 @@ import io.seata.core.model.Resource;
 import io.seata.core.model.ResourceManager;
 import io.seata.integration.tx.api.util.ProxyUtil;
 import io.seata.rm.DefaultResourceManager;
-import io.seata.rm.tcc.NormalTccAction;
 import io.seata.rm.tcc.NormalTccActionImpl;
 import io.seata.rm.tcc.TccParam;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -93,12 +93,19 @@ public class ProxyUtilsTccTest {
         }
     };
 
+    private static NormalTccActionImpl tccActionProxy;
+
+    @BeforeAll
+    static void init() {
+        //given
+        NormalTccActionImpl normalTccAction = new NormalTccActionImpl();
+        tccActionProxy = ProxyUtil.createProxy(normalTccAction);
+    }
+
 
     @Test
     public void testTcc() {
         //given
-        NormalTccActionImpl tccAction = new NormalTccActionImpl();
-        NormalTccAction tccActionProxy = ProxyUtil.createProxy(tccAction);
         RootContext.bind(DEFAULT_XID);
 
         TccParam tccParam = new TccParam(1, "abc@163.com");
@@ -118,8 +125,6 @@ public class ProxyUtilsTccTest {
     @Test
     public void testTccThrowRawException() {
         //given
-        NormalTccActionImpl tccAction = new NormalTccActionImpl();
-        NormalTccAction tccActionProxy = ProxyUtil.createProxy(tccAction);
         RootContext.bind(DEFAULT_XID);
 
         TccParam tccParam = new TccParam(1, "abc@163.com");
@@ -134,12 +139,7 @@ public class ProxyUtilsTccTest {
 
     @Test
     public void testTccImplementOtherMethod(){
-        NormalTccActionImpl tccAction = new NormalTccActionImpl();
-        NormalTccActionImpl tccActionProxy = ProxyUtil.createProxy(tccAction);
-
         Assertions.assertTrue(tccActionProxy.otherMethod());
-
     }
-
 
 }
